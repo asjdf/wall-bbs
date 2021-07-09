@@ -2,7 +2,7 @@
   <div id="app">
 
     <navbar></navbar>
-    <router-view/>
+    <router-view :key="key"/>
     <img alt="Vue logo" src="./assets/logo.png">
 
     <HelloWorld msg="Welcome to Your Vue.js App"/>
@@ -18,6 +18,13 @@ export default {
   components: {
     HelloWorld,
     navbar
+  },
+  computed: {
+    key() {
+      return this.$route.name !== undefined
+          ? this.$route.name + new Date()
+          : this.$route + new Date();
+    }
   }
 }
 </script>

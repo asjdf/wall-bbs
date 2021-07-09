@@ -1,16 +1,18 @@
 <template>
-
   <el-container>
-<!--    <el-row>-->
-<!--      <el-carousel :interval="5000" arrow="always">-->
-<!--        <el-carousel-item v-for="item in 4" :key="item">-->
-<!--          <h3>{{ item }}</h3>-->
-<!--        </el-carousel-item>-->
-<!--      </el-carousel>-->
-<!--    </el-row>-->
+    <!--    <el-row>-->
+    <!--      <el-carousel :interval="5000" arrow="always">-->
+    <!--        <el-carousel-item v-for="item in 4" :key="item">-->
+    <!--          <h3>{{ item }}</h3>-->
+    <!--        </el-carousel-item>-->
+    <!--      </el-carousel>-->
+    <!--    </el-row>-->
     <el-row type="flex" justify="center">
       <el-col :sm="22" :md="20" :lg="18">
         <el-col :xs="24" :sm="16" :md="17">
+          <el-card>
+            <el-page-header @back="goBack" content="板块名称"/>
+          </el-card>
           <div class="board-list">
             <el-row>
               <el-col
@@ -18,13 +20,10 @@
                   v-for="board in boards"
                   :key="board.bname"
               >
-                <div @click="goBoard(board.bid)">
-                  <el-card class="board-list-card">
-                    <el-avatar :size="70" :src="board.bpic">{{board.bname}}</el-avatar>
-                    <el-divider class="divider">{{board.bname}}</el-divider>
-                  </el-card>
-                </div>
-
+                <el-card class="board-list-card">
+                  <el-avatar :size="70" :src="board.bpic">{{board.bname}}</el-avatar>
+                  <el-divider class="divider">{{board.bname}}</el-divider>
+                </el-card>
               </el-col>
 
 
@@ -38,18 +37,18 @@
                 :timestamp="blog.ptime"
                 class="posts-list-card"
             >
-<!--              <el-dropdown class="management" v-if="right==1">-->
-<!--                <span class="el-dropdown-link">-->
-<!--                  管理<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
-<!--                </span>-->
-<!--                <el-dropdown-menu slot="dropdown">-->
-<!--                  <el-dropdown-item><p @click="deletePost(blog.id)">删除</p></el-dropdown-item>-->
-<!--                </el-dropdown-menu>-->
-<!--              </el-dropdown>-->
+              <!--              <el-dropdown class="management" v-if="right==1">-->
+              <!--                <span class="el-dropdown-link">-->
+              <!--                  管理<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+              <!--                </span>-->
+              <!--                <el-dropdown-menu slot="dropdown">-->
+              <!--                  <el-dropdown-item><p @click="deletePost(blog.id)">删除</p></el-dropdown-item>-->
+              <!--                </el-dropdown-menu>-->
+              <!--              </el-dropdown>-->
 
-<!--              <div v-html="compiledMarkdown(blog.content)" class="post-content"/>-->
+              <!--              <div v-html="compiledMarkdown(blog.content)" class="post-content"/>-->
               <div v-html="blog.content" class="post-content" @click="goDetail(blog.pid)"/>
-<!--              <el-skeleton />-->
+              <!--              <el-skeleton />-->
               <el-divider class="divider" content-position="right">{{blog.username}}</el-divider>
               <p class="post-time">{{ blog.ptime }}</p>
             </el-card>
@@ -75,14 +74,12 @@
 </template>
 
 <script>
-// import HelloWorld from "@/components/HelloWorld";
 export default {
-  name: "index",
+  name: "board",
   data() {
     return {
       totalPages : 5,
       blogs: [],
-      boards: []
     }
   },
   components: {
@@ -94,36 +91,17 @@ export default {
         this.blogs = response.data.data.list;
       })
     },
-    getBoardList() {
-      this.$ajax.get('/api/app/mock/data/180').then((response) => {
-        this.boards = response.data.data.list;
-      })
-    },
     goDetail(pid) {
       this.$router.push({ name: 'detail', params: { pid: pid } })
-    },
-    goBoard(bid) {
-      this.$router.push({ name: 'board', params: { bid: bid } })
     }
   },
   created() {
     this.getPostList();
-    this.getBoardList();
   }
 }
 </script>
 
 <style scoped>
-  .el-row {
-    width: 100%;
-  }
-  .board-list-card {
-    padding-bottom: 0px;
-    margin: 0.5em;
-  }
-  .board-list-card .divider {
-    margin: 1em 0 0 0;
-  }
   .posts-list-card {
     margin-bottom: 1em;
   }

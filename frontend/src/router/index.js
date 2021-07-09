@@ -6,19 +6,29 @@ export default new VueRouter({
     mode: 'history',
     routes: [
         {
-            name: '首页',
+            name: 'index',
             path: '/',
             component: () => import('@/views/index')
         },
         {
-            name: '注册',
+            name: 'register',
             path: '/register',
             component: () => import('@/views/register')
         },
         {
-            name: '登录',
+            name: 'login',
             path: '/login',
             component: () => import('@/views/login')
+        },
+        {
+            name: 'detail',
+            path: '/detail/:pid',
+            component: () => import('@/views/detail')
+        },
+        {
+            name: 'board',
+            path: '/board/:bid',
+            component: () => import('@/views/board')
         }
     ]
 })
