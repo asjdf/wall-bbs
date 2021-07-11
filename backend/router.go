@@ -13,7 +13,17 @@ func (s *Service) initRouter() {
 	s.CORS()
 	//auth middleware request-id middleware
 
+	s.Router.Use(
+		auth.Middleware,
+		CreateRequestIDMiddleware,
+		verify.Handler,
+		log.InitViaLogging,
+	)
 
+	//s.Router.LoadHTMLGlob("config_gateway_new/static/template/*")
+	//404
+	s.Router.NoRoute(RequestEntry(Handler404))
+	router.Init(s.Router)
 }
 
 // CORS add cors middleware

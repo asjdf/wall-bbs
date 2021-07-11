@@ -7,6 +7,12 @@ type Conf struct {
 		Pass string
 		DB   string
 	}
+	Redis struct{
+		Addr string
+		Port string
+		Pass string
+		DBID int
+	}
 	Server struct{
 		Port string
 	}

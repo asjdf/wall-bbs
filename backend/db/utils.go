@@ -22,6 +22,6 @@ func CreateDB(a struct {
 	Pass string
 	DB   string
 }) (*gorm.DB, error) {
-	fmt.Println(CreateDSN(a))
+	//fmt.Println(CreateDSN(a))
 	return gorm.Open(mysql.Open(CreateDSN(a)), &gorm.Config{PrepareStmt: true})
 }
