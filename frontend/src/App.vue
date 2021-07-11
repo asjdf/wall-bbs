@@ -3,20 +3,15 @@
 
     <navbar></navbar>
     <router-view :key="key"/>
-    <img alt="Vue logo" src="./assets/logo.png">
-
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>
 </template>
 
 <script>
 import navbar from "@/components/navbar";
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
     navbar
   },
   computed: {
