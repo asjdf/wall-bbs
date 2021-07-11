@@ -15,6 +15,38 @@
             <el-page-header @back="goBack" content="详情页面"/>
           </el-card>
           <div class="posts-list">
+            <el-card class="posts-list-card">
+              <!--              <el-dropdown class="management" v-if="right==1">-->
+              <!--                <span class="el-dropdown-link">-->
+              <!--                  管理<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+              <!--                </span>-->
+              <!--                <el-dropdown-menu slot="dropdown">-->
+              <!--                  <el-dropdown-item><p @click="deletePost(blog.id)">删除</p></el-dropdown-item>-->
+              <!--                </el-dropdown-menu>-->
+              <!--              </el-dropdown>-->
+
+              <!--              <div v-html="compiledMarkdown(blog.content)" class="post-content"/>-->
+              <div v-html="1" class="post-content"/>
+              <!--              <el-skeleton />-->
+              <el-divider class="divider" content-position="right">abc</el-divider>
+              <p class="post-time">2020-01-02</p>
+            </el-card>
+
+            <el-card
+                class="posts-list-card"
+            >
+              <quill-editor
+                  class="editor"
+                  v-model="content"
+                  :options="editorOption"
+              />
+              <div class="output ql-snow">
+                <div class="title">Output</div>
+                <div class="ql-editor" v-html="this.content"></div>
+              </div>
+            </el-card>
+
+
             <el-card
                 v-for="comment in comments"
                 :key="comment.content"
@@ -63,7 +95,31 @@ export default {
   data() {
     return {
       totalPages : 5,
-      comments: []
+      comments: [],
+      content: '',
+      editorOption: {
+        theme: 'snow',
+        modules: {
+          toolbar: {
+            container: [
+              ['bold','link', 'image']
+            ],
+            handlers: {
+              // 'image': function () {
+              //   QuillWatch.emit(this.quill.id)
+              // }
+            }
+          },
+          // ImageExtend: {
+          //   loading: true,
+          //   name: 'img',
+          //   action: 'https://github.surmon.me/images/',
+          //   response: (res) => {
+          //     return testImageUrl
+          //   }
+          // }
+        }
+      }
     }
   },
   methods: {
