@@ -1,5 +1,8 @@
 package main
 
-func main() {
+import "wall-bbs/service"
 
+func main() {
+	service.Init()
+	service.Run()
 }

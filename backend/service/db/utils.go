@@ -21,7 +21,15 @@ func CreateDB(a struct {
 	User string
 	Pass string
 	DB   string
+	ConnectTimeout uint
 }) (*gorm.DB, error) {
 	//fmt.Println(CreateDSN(a))
-	return gorm.Open(mysql.Open(CreateDSN(a)), &gorm.Config{PrepareStmt: true})
+	config := struct {
+		Addr string
+		User string
+		Pass string
+		DB   string
+	}{a.Addr,a.User,a.Pass,a.DB}
+	DB,err := gorm.Open(mysql.Open(CreateDSN(config)), &gorm.Config{PrepareStmt: true})
+	return DB,err
 }

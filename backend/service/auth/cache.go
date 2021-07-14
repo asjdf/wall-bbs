@@ -13,8 +13,8 @@ func SetCache(key string, val interface{}, expire int) {
 	go setRedisCache(key, expire, val)
 }
 
-func GetCache(c *gin.Context, school, key string, expire int) (interface{}, error) {
-	data, found := s.Cache.Get(school + "-" + key)
+func GetCache(c *gin.Context, key string, expire int) (interface{}, error) {
+	data, found := s.Cache.Get(key)
 	if !found {
 		d, err := getRedisCache(key)
 		if err != nil || d == nil {
