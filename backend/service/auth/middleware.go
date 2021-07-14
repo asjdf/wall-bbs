@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 	"strings"
@@ -48,7 +47,6 @@ func Middleware(c *gin.Context) {
 		if err != nil {
 			token = LookUpAuthToken(tokenStr)
 			if token.Valid() {
-				fmt.Println("valid")
 				SetCache(PREFIX_CACHE_TOKEN+tokenStr, token, 3600)
 				token.ExtendExpireTime()
 			}
