@@ -27,6 +27,10 @@ func Init() {
 // CORS add cors middleware
 func (s *service) CORS() {
 	cf := cors.Config{
+		AllowOrigins: []string{
+			"http://localhost:8081",
+			"https://localhost:8081",
+		},
 		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "OPTION"},
 		AllowHeaders: []string{
 			"Origin", "Content-Length", "Content-Type",
@@ -35,7 +39,7 @@ func (s *service) CORS() {
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}
-	cf.AllowAllOrigins = true
+	//cf.AllowAllOrigins = true
 
 	s.HttpEngine.Use(cors.New(cf))
 }
