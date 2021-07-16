@@ -75,8 +75,8 @@ func handleNewPost(c *gin.Context) {
 func handlelListPosts(c *gin.Context) {
 	postData := struct {
 		ParentID string `json:"parent_id"`
-		PageNum  uint `json:"page_num"`
-		Desc     bool `json:"desc"`
+		PageNum  uint   `json:"page_num"`
+		Desc     bool   `json:"desc"`
 	}{}
 
 	if err := c.ShouldBindJSON(&postData); err != nil {
@@ -101,12 +101,17 @@ func handlelListPosts(c *gin.Context) {
 		PostTime string `json:"post_time"`
 	}
 	type postsList struct {
+		TotalPage  int64      `json:"total_page"`
 		ParentPost postInfo   `json:"parent_post"`
 		ChildList  []postInfo `json:"child_list"`
 	}
 	boardListOutput := postsList{}
 
 	if postData.ParentID == "" {
+		db.MySQL().Model(&post{}).
+			Where("statue = 1").
+			Count(&boardListOutput.TotalPage)
+		boardListOutput.TotalPage = boardListOutput.TotalPage/10+1
 		db.MySQL().Where("parent_uuid != ''").
 			Where("statue = 1").
 			Joins("User").
@@ -136,6 +141,11 @@ func handlelListPosts(c *gin.Context) {
 			boardListOutput.ParentPost.UID = 0
 		}
 
+		db.MySQL().Model(&post{}).
+			Where("parent_uuid = ?", parentPost.PostUuid).
+			Where("statue = 1").
+			Count(&boardListOutput.TotalPage)
+		boardListOutput.TotalPage = boardListOutput.TotalPage/10+1
 		db.MySQL().Where("parent_uuid = ?", parentPost.PostUuid).
 			Where("statue = 1").
 			Joins("User").

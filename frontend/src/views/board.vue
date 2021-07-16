@@ -11,24 +11,8 @@
       <el-col :sm="22" :md="20" :lg="18">
         <el-col :xs="24" :sm="16" :md="17">
           <el-card>
-            <el-page-header @back="goBack" content="板块名称"/>
+            <el-page-header @back="goBack" :content="boardInfo.content"/>
           </el-card>
-          <div class="board-list">
-            <el-row>
-              <el-col
-                  :xs="12" :sm="6" :md="6" :lg="4" :xl="1"
-                  v-for="board in boards"
-                  :key="board.bname"
-              >
-                <el-card class="board-list-card">
-                  <el-avatar :size="70" :src="board.bpic">{{board.bname}}</el-avatar>
-                  <el-divider class="divider">{{board.bname}}</el-divider>
-                </el-card>
-              </el-col>
-
-
-            </el-row>
-          </div>
 
           <div class="posts-list">
             <el-card
@@ -49,17 +33,18 @@
               <!--              <div v-html="compiledMarkdown(blog.content)" class="post-content"/>-->
               <div v-html="blog.content" class="post-content" @click="goDetail(blog.pid)"/>
               <!--              <el-skeleton />-->
-              <el-divider class="divider" content-position="right">{{blog.username}}</el-divider>
-              <p class="post-time">{{ blog.ptime }}</p>
+              <el-divider class="divider" content-position="right">{{ blog.user_name }}</el-divider>
+              <p class="post-time">{{ blog.post_time }}</p>
             </el-card>
           </div>
 
           <el-pagination
-              v-model="pageNum"
-
+              v-model="currentPage"
               layout="prev, pager, next"
               :page-count="totalPages"
+              :current-page.sync="currentPage"
               :hide-on-single-page="true"
+              @current-change="onPageChange"
               background
           />
         </el-col>
@@ -78,7 +63,9 @@ export default {
   name: "board",
   data() {
     return {
-      totalPages : 5,
+      boardInfo: {},
+      totalPages : 1,
+      currentPage: 1,
       blogs: [],
     }
   },
@@ -86,13 +73,29 @@ export default {
     // HelloWorld
   },
   methods: {
+    goBack() {
+      window.history.length > 1 ? this.$router.go(-1) : this.$router.push('/')
+    },
     getPostList() {
-      this.$ajax.get('/api/app/mock/data/179').then((response) => {
-        this.blogs = response.data.data.list;
+      this.$ajax.post('/posts/list', {
+        parent_id: String(this.$route.params.bid),
+        page_num: this.currentPage,
+        desc: true
+      }).then((response) => {
+        this.totalPages = response.data.data.total_page;
+        this.boardInfo = response.data.data.parent_post;
+        this.blogs = response.data.data.child_list;
       })
     },
     goDetail(pid) {
       this.$router.push({ name: 'detail', params: { pid: pid } })
+    },
+    backTop () {
+      window.scrollTo(0,0);
+    },
+    onPageChange(){
+      this.getPostList();
+      this.backTop();
     }
   },
   created() {
@@ -102,6 +105,9 @@ export default {
 </script>
 
 <style scoped>
+  .el-row {
+    width: 100%;
+  }
   .posts-list-card {
     margin-bottom: 1em;
   }

@@ -26,10 +26,10 @@
               <!--              </el-dropdown>-->
 
               <!--              <div v-html="compiledMarkdown(blog.content)" class="post-content"/>-->
-              <div v-html="1" class="post-content"/>
+              <div v-html="parentInfo.content" class="post-content"/>
               <!--              <el-skeleton />-->
-              <el-divider class="divider" content-position="right">abc</el-divider>
-              <p class="post-time">2020-01-02</p>
+              <el-divider class="divider" content-position="right">{{ parentInfo.user_name }}</el-divider>
+              <p class="post-time">{{ parentInfo.post_time }}</p>
             </el-card>
 
             <el-card
@@ -65,17 +65,18 @@
               <!--              <div v-html="compiledMarkdown(blog.content)" class="post-content"/>-->
               <div v-html="comment.content" class="post-content" @click="goDetail(comment.pid)"/>
               <!--              <el-skeleton />-->
-              <el-divider class="divider" content-position="right">{{comment.username}}</el-divider>
-              <p class="post-time">{{comment.ptime }}</p>
+              <el-divider class="divider" content-position="right">{{ comment.user_name }}</el-divider>
+              <p class="post-time">{{ comment.post_time }}</p>
             </el-card>
           </div>
 
           <el-pagination
-              v-model="pageNum"
-
+              v-model="currentPage"
               layout="prev, pager, next"
               :page-count="totalPages"
+              :current-page.sync="currentPage"
               :hide-on-single-page="true"
+              @current-change="onPageChange"
               background
           />
         </el-col>
@@ -94,7 +95,9 @@ export default {
   name: "detail",
   data() {
     return {
-      totalPages : 5,
+      totalPages : 1,
+      currentPage: 1,
+      parentInfo: {},
       comments: [],
       content: '',
       editorOption: {
@@ -126,23 +129,36 @@ export default {
     goBack() {
       window.history.length > 1 ? this.$router.go(-1) : this.$router.push('/')
     },
-    getCommentList() {
-      // this.$router.params.pid
-      this.$ajax.get('/api/app/mock/data/179').then((response) => {
-        this.comments = response.data.data.list;
+    getPostList() {
+      this.$ajax.post('/posts/list', {
+        parent_id: String(this.$route.params.pid),
+        page_num: this.currentPage
+      }).then((response) => {
+        this.parentInfo = response.data.data.parent_post
+        this.comments = response.data.data.child_list;
       })
     },
     goDetail(pid) {
       this.$router.push({ name: 'detail', params: { pid: pid } })
+    },
+    backTop () {
+      window.scrollTo(0,0);
+    },
+    onPageChange(){
+      this.getPostList();
+      this.backTop();
     }
   },
   created() {
-    this.getCommentList();
+    this.getPostList();
   }
 }
 </script>
 
 <style scoped>
+  .el-row {
+    width: 100%;
+  }
   .posts-list-card {
     margin-bottom: 1em;
   }

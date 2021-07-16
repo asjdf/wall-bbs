@@ -16,12 +16,12 @@
               <el-col
                   :xs="12" :sm="6" :md="6" :lg="4" :xl="1"
                   v-for="board in boards"
-                  :key="board.bname"
+                  :key="board.board_name"
               >
-                <div @click="goBoard(board.bid)">
+                <div @click="goBoard(board.board_id)">
                   <el-card class="board-list-card">
-                    <el-avatar :size="70" :src="board.bpic">{{board.bname}}</el-avatar>
-                    <el-divider class="divider">{{board.bname}}</el-divider>
+                    <el-avatar :size="70" :src="board.bpic">{{board.board_name}}</el-avatar>
+                    <el-divider class="divider">{{board.board_name}}</el-divider>
                   </el-card>
                 </div>
 
@@ -50,17 +50,18 @@
 <!--              <div v-html="compiledMarkdown(blog.content)" class="post-content"/>-->
               <div v-html="blog.content" class="post-content" @click="goDetail(blog.pid)"/>
 <!--              <el-skeleton />-->
-              <el-divider class="divider" content-position="right">{{blog.username}}</el-divider>
-              <p class="post-time">{{ blog.ptime }}</p>
+              <el-divider class="divider" content-position="right">{{blog.user_name}}</el-divider>
+              <p class="post-time">{{ blog.post_time }}</p>
             </el-card>
           </div>
 
           <el-pagination
-              v-model="pageNum"
-
+              v-model="currentPage"
               layout="prev, pager, next"
               :page-count="totalPages"
+              :current-page.sync="currentPage"
               :hide-on-single-page="true"
+              @current-change="onPageChange"
               background
           />
         </el-col>
@@ -80,7 +81,8 @@ export default {
   name: "index",
   data() {
     return {
-      totalPages : 5,
+      totalPages : 1,
+      currentPage: 1,
       blogs: [],
       boards: []
     }
@@ -90,12 +92,17 @@ export default {
   },
   methods: {
     getPostList() {
-      this.$ajax.get('/api/app/mock/data/179').then((response) => {
-        this.blogs = response.data.data.list;
+      this.$ajax.post('/posts/list', {
+        parent_id: "",
+        page_num: this.currentPage,
+        desc: true
+      }).then((response) => {
+        this.totalPages = response.data.data.total_page;
+        this.blogs = response.data.data.child_list;
       })
     },
     getBoardList() {
-      this.$ajax.get('/api/app/mock/data/180').then((response) => {
+      this.$ajax.get('/boards/list').then((response) => {
         this.boards = response.data.data.list;
       })
     },
@@ -104,6 +111,13 @@ export default {
     },
     goBoard(bid) {
       this.$router.push({ name: 'board', params: { bid: bid } })
+    },
+    backTop () {
+      window.scrollTo(0,0);
+    },
+    onPageChange(){
+      this.getPostList();
+      this.backTop();
     }
   },
   created() {
