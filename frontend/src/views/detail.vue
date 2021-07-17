@@ -40,10 +40,10 @@
                   v-model="content"
                   :options="editorOption"
               />
-              <div class="output ql-snow">
-                <div class="title">Output</div>
-                <div class="ql-editor" v-html="this.content"></div>
-              </div>
+              <el-row type="flex" justify="space-between" align="middle">
+                <el-checkbox v-model="anonymous">匿名  </el-checkbox>
+                <el-button type="primary" size="medium" round @click="postContent" :loading="isPosting">发送</el-button>
+              </el-row>
             </el-card>
 
 
@@ -95,6 +95,8 @@ export default {
   name: "detail",
   data() {
     return {
+      anonymous: false,
+      isPosting: false,
       totalPages : 1,
       currentPage: 1,
       parentInfo: {},
@@ -147,6 +149,33 @@ export default {
     onPageChange(){
       this.getPostList();
       this.backTop();
+    },
+    postContent() {
+      this.isPosting = true
+      this.$ajax.post('/posts/new', {
+        parent_id: String(this.$route.params.pid),
+        content: this.content,
+        anonymous: this.anonymous,
+      }).then((response) => {
+        if(response.data.code == 20000){
+          this.$message({
+            message: '发布成功',
+            type: 'success'
+          });
+        }else{
+          this.$message({
+            message: response.data.msg,
+            type: 'error'
+          });
+        }
+        // eslint-disable-next-line no-unused-vars
+      }).catch(err => {
+        this.$message({
+          message: "发布遇到其他错误",
+          type: 'error'
+        });
+      })
+      this.isPosting = false
     }
   },
   created() {

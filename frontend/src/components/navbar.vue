@@ -7,18 +7,29 @@
       v-bind:router = true>
     <el-menu-item index="/">PLBBQ</el-menu-item>
 <!--    <el-menu-item v-if="this.$store.state.isLogin" index="/post">发表</el-menu-item>-->
-    <el-menu-item v-if="!this.$store.state.isLogin" index="/login">登录</el-menu-item>
-    <el-menu-item v-if="!this.$store.state.isLogin" index="/register">注册</el-menu-item>
-<!--    <el-submenu v-if="this.$store.state.isLogin" index="4">-->
-<!--      <template slot="title">个人中心</template>-->
-<!--      <el-menu-item @click="logout">登出</el-menu-item>-->
-<!--    </el-submenu>-->
+    <el-menu-item v-if="!this.$store.state.hasToken" index="/login">登录</el-menu-item>
+    <el-menu-item v-if="!this.$store.state.hasToken" index="/register">注册</el-menu-item>
+    <el-submenu v-if="this.$store.state.hasToken" index="4">
+      <template slot="title">个人中心</template>
+      <el-menu-item @click="logout">登出</el-menu-item>
+    </el-submenu>
   </el-menu>
 </template>
 
 <script>
 export default {
-  name: "navbar"
+  name: "navbar",
+  methods: {
+    logout() {
+      this.$ajax({
+        url: '/user/logout',
+        method: 'get',
+      })
+      localStorage.removeItem('token')
+      this.$store.state.hasToken = false
+      this.$router.push('/')
+    },
+  }
 }
 </script>
 

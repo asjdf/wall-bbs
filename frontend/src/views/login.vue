@@ -1,15 +1,16 @@
 <template>
   <el-row type="flex" justify="center">
     <el-col :xs="24" :sm="10" :md="8">
-      <img alt="Vue logo" src="@/assets/logo.png">
+
       <el-card
           shadow="hover"
           class="login-form"
       >
-        <el-input class="login-form-input" v-model="email" placeholder="邮箱"/>
+<!--        <img alt="logo" src="@/assets/logo.jpg">-->
+        <el-input class="login-form-input" v-model="tel" placeholder="邮箱"/>
 
         <el-input class="login-form-input" v-model="pwd" show-password placeholder="密码"/>
-        <el-button class="login-form-button" @click="login(email,pwd)">登录</el-button>
+        <el-button class="login-form-button" @click="login()">登录</el-button>
       </el-card>
     </el-col>
   </el-row>
@@ -20,12 +21,12 @@ export default {
   name: "login",
   data() {
     return {
-      email: '',
-      pwd: ''
+      tel: '',
+      pwd: '',
     }
   },
   methods: {
-    checkLogin: function () {
+    checkLogin() {
       this.$ajax({url: '/isLogin.php'}).then((response) => {
         if (response.data.code === 20000){
           this.$store.state.isLogin = true
@@ -33,22 +34,45 @@ export default {
         }
       })
     },
-    login: function (email, pwd) {
+    goBack() {
+      window.history.length > 1 ? this.$router.go(-1) : this.$router.push('/')
+    },
+    login() {
       this.$ajax({
-        url: '/login.php',
+        url: '/user/login',
         method: 'post',
         data: {
-          email: email,
-          pwd: pwd
+          tel: this.tel,
+          password: this.pwd,
         }
       }).then((response) => {
         console.log(response.data)
         if(response.data.code === 20000){
-          this.checkLogin()
-          this.$router.push('/')
+          this.$message({
+            message: '登录成功',
+            type: 'success'
+          });
+          // this.checkLogin()
+          this.goBack()
+          //全局存储token
+          window.localStorage["token"] = response.data.data.token;
+          this.$store.state.hasToken = true;
+          this.$store.state.right = response.data.data.right;
+          this.$store.state.uid = response.data.data.uid;
+        }else{
+          this.$message({
+            message: response.data.msg,
+            type: 'error'
+          });
         }
+        // eslint-disable-next-line no-unused-vars
+      }).catch(err => {
+        this.$message({
+          message: "登录错误",
+          type: 'error'
+        });
       })
-    }
+    },
   }
 }
 </script>

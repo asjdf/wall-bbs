@@ -16,6 +16,20 @@
 
           <div class="posts-list">
             <el-card
+                class="posts-list-card"
+            >
+              <quill-editor
+                  class="editor"
+                  v-model="content"
+                  :options="editorOption"
+              />
+              <el-row type="flex" justify="space-between" align="middle">
+                <el-checkbox v-model="anonymous">匿名  </el-checkbox>
+                <el-button type="primary" size="medium" round @click="postContent" :loading="isPosting">发送</el-button>
+              </el-row>
+            </el-card>
+
+            <el-card
                 v-for="blog in blogs"
                 :key="blog.content"
                 :timestamp="blog.ptime"
@@ -67,6 +81,34 @@ export default {
       totalPages : 1,
       currentPage: 1,
       blogs: [],
+      anonymous: false,
+      isPosting: false,
+      parentInfo: {},
+      comments: [],
+      content: '',
+      editorOption: {
+        theme: 'snow',
+        modules: {
+          toolbar: {
+            container: [
+              ['bold','link', 'image']
+            ],
+            handlers: {
+              // 'image': function () {
+              //   QuillWatch.emit(this.quill.id)
+              // }
+            }
+          },
+          // ImageExtend: {
+          //   loading: true,
+          //   name: 'img',
+          //   action: 'https://github.surmon.me/images/',
+          //   response: (res) => {
+          //     return testImageUrl
+          //   }
+          // }
+        }
+      }
     }
   },
   components: {
@@ -96,7 +138,34 @@ export default {
     onPageChange(){
       this.getPostList();
       this.backTop();
-    }
+    },
+    postContent() {
+      this.isPosting = true
+      this.$ajax.post('/posts/new', {
+        parent_id: String(this.$route.params.bid),
+        content: this.content,
+        anonymous: this.anonymous,
+      }).then((response) => {
+        if(response.data.code == 20000){
+          this.$message({
+            message: '发布成功',
+            type: 'success'
+          });
+        }else{
+          this.$message({
+            message: response.data.msg,
+            type: 'error'
+          });
+        }
+        // eslint-disable-next-line no-unused-vars
+      }).catch(err => {
+        this.$message({
+          message: "发布遇到其他错误",
+          type: 'error'
+        });
+      })
+      this.isPosting = false
+    },
   },
   created() {
     this.getPostList();
