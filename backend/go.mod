@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/elazarl/goproxy v0.0.0-20210110162100-a92cc753f88e // indirect
+	github.com/feiin/go-xss v0.0.0-20210430063220-4fdcf7276158
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.2
 	github.com/gomodule/redigo v1.8.5

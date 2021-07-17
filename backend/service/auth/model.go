@@ -12,7 +12,7 @@ type authToken struct {
 	UID        uint `gorm:"index"`
 	Right      string
 	Tel        string `gorm:"index"`
-	ExpireTime time.Time
+	ExpireTime time.Time `gorm:"index"`
 }
 
 type authResp struct {

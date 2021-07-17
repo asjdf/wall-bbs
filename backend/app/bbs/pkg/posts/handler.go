@@ -1,6 +1,7 @@
 package posts
 
 import (
+	"github.com/feiin/go-xss"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 	"wall-bbs/app/bbs/pkg/respondTemplate"
@@ -25,7 +26,7 @@ func Init() {
 func handleNewPost(c *gin.Context) {
 	authResp := auth.GetAuthStatus(c)
 	if !authResp.Found {
-		respondTemplate.RespondJson(c, 40000, "尚未登陆")
+		respondTemplate.RespondJson(c, 40001, "尚未登陆")
 		return
 	}
 	if authResp.Token.Right == "-1" {
@@ -56,11 +57,14 @@ func handleNewPost(c *gin.Context) {
 		return
 	}
 	//todo：下面存content之前要加上防xss的过滤器 以及Statue的默认值应该为可配置的
+	safeContent := xss.FilterXSS(postData.Content,xss.XssOption{
+		WhiteList: xss.GetDefaultWhiteList(),
+	})
 	post := post{
 		PostUuid:   uuid.NewV4().String(),
 		Uuid:       authResp.Token.Uuid,
 		ParentUuid: parentPost.PostUuid,
-		Content:    postData.Content,
+		Content:    safeContent,
 		Statue:     0,
 		Anonymous:  postData.Anonymous,
 	}
@@ -196,7 +200,7 @@ func handlelListPosts(c *gin.Context) {
 func handleNewBoard(c *gin.Context) {
 	authResp := auth.GetAuthStatus(c)
 	if !authResp.Found {
-		respondTemplate.RespondJson(c, 40000, "尚未登陆")
+		respondTemplate.RespondJson(c, 40001, "尚未登陆")
 		return
 	}
 	if authResp.Token.Right != "1" {
@@ -219,11 +223,14 @@ func handleNewBoard(c *gin.Context) {
 	}
 
 	//todo：下面存content之前要加上防xss的过滤器 以及Statue的默认值应该为可配置的
+	safeContent := xss.FilterXSS(postData.Content,xss.XssOption{
+		WhiteList: xss.GetDefaultWhiteList(),
+	})
 	post := post{
 		PostUuid:   uuid.NewV4().String(),
 		Uuid:       authResp.Token.Uuid,
 		ParentUuid: "",
-		Content:    postData.Content,
+		Content:    safeContent,
 		Statue:     0,
 	}
 	if err := db.MySQL().Create(&post).Error; err != nil {

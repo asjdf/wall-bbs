@@ -28,6 +28,7 @@ func Init() {
 func (s *service) CORS() {
 	cf := cors.Config{
 		AllowOrigins: []string{
+			"http://cs.ptlzwnq.cn",
 			"http://localhost:8081",
 			"https://localhost:8081",
 		},

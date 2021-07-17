@@ -79,7 +79,11 @@ func handleUserLogin(c *gin.Context) {
 			respondTemplate.RespondJson(c, 50000, "登录出错")
 			return
 		}
-		respondTemplate.RespondJsonWithData(c, 20000, "登录成功", gin.H{"token": token})
+		respondTemplate.RespondJsonWithData(c, 20000, "登录成功", gin.H{
+			"token": token,
+			"uid":   userData.Uid,
+			"right": userData.Right,
+		})
 		return
 	} else {
 		respondTemplate.RespondJson(c, 40300, "密码错误")
