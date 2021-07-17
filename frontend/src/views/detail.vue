@@ -198,6 +198,9 @@ export default {
   .posts-list-card .divider {
     margin: 1em 0;
   }
+  .post-content img{
+    width: 93%;
+  }
   .posts-list-card .management {
     float: right;
   }
