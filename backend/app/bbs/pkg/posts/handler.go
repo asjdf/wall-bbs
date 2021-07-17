@@ -112,7 +112,7 @@ func handlelListPosts(c *gin.Context) {
 	boardListOutput := postsList{}
 
 	if postData.ParentID == "" {
-		db.MySQL().Model(&post{}).
+		db.MySQL().Model(&post{}).Where("parent_uuid != ''").
 			Where("statue = 1").
 			Count(&boardListOutput.TotalPage)
 		boardListOutput.TotalPage = boardListOutput.TotalPage/10+1

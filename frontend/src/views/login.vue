@@ -7,7 +7,7 @@
           class="login-form"
       >
 <!--        <img alt="logo" src="@/assets/logo.jpg">-->
-        <el-input class="login-form-input" v-model="tel" placeholder="邮箱"/>
+        <el-input class="login-form-input" v-model="tel" placeholder="手机号"/>
 
         <el-input class="login-form-input" v-model="pwd" show-password placeholder="密码"/>
         <el-button class="login-form-button" @click="login()">登录</el-button>
