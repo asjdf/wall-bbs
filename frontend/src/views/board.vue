@@ -151,6 +151,7 @@ export default {
             message: '发布成功',
             type: 'success'
           });
+          this.getPostList();
         }else{
           this.$message({
             message: response.data.msg,
@@ -186,6 +187,9 @@ export default {
   }
   .posts-list-card .divider {
     margin: 1em 0;
+  }
+  .post-content {
+    padding: 20px 0 0;
   }
   .post-content >>> img {
     width: 93%;

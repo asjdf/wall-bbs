@@ -16,14 +16,14 @@
           </el-card>
           <div class="posts-list">
             <el-card class="posts-list-card">
-              <!--              <el-dropdown class="management" v-if="right==1">-->
-              <!--                <span class="el-dropdown-link">-->
-              <!--                  管理<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
-              <!--                </span>-->
-              <!--                <el-dropdown-menu slot="dropdown">-->
-              <!--                  <el-dropdown-item><p @click="deletePost(blog.id)">删除</p></el-dropdown-item>-->
-              <!--                </el-dropdown-menu>-->
-              <!--              </el-dropdown>-->
+              <el-dropdown class="management" v-if="this.$store.state.right===1||parentInfo.uid===this.$store.state.uid">
+                <span class="el-dropdown-link">
+                  管理<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item><p @click="deletePost2(parentInfo.pid)">删除</p></el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
 
               <!--              <div v-html="compiledMarkdown(blog.content)" class="post-content"/>-->
               <div v-html="parentInfo.content" class="post-content"/>
@@ -53,14 +53,14 @@
                 :timestamp="comment.ptime"
                 class="posts-list-card"
             >
-              <!--              <el-dropdown class="management" v-if="right==1">-->
-              <!--                <span class="el-dropdown-link">-->
-              <!--                  管理<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
-              <!--                </span>-->
-              <!--                <el-dropdown-menu slot="dropdown">-->
-              <!--                  <el-dropdown-item><p @click="deletePost(blog.id)">删除</p></el-dropdown-item>-->
-              <!--                </el-dropdown-menu>-->
-              <!--              </el-dropdown>-->
+              <el-dropdown class="management" v-if="this.$store.state.right===1||comment.uid===this.$store.state.uid">
+                <span class="el-dropdown-link">
+                  管理<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item><p @click="deletePost(comment.pid)">删除</p></el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
 
               <!--              <div v-html="compiledMarkdown(blog.content)" class="post-content"/>-->
               <div v-html="comment.content" class="post-content" @click="goDetail(comment.pid)"/>
@@ -151,17 +151,18 @@ export default {
       this.backTop();
     },
     postContent() {
-      this.isPosting = true
+      this.isPosting = true;
       this.$ajax.post('/posts/new', {
         parent_id: String(this.$route.params.pid),
         content: this.content,
         anonymous: this.anonymous,
       }).then((response) => {
-        if(response.data.code == 20000){
+        if(response.data.code === 20000){
           this.$message({
             message: '发布成功',
             type: 'success'
           });
+          this.getPostList();
         }else{
           this.$message({
             message: response.data.msg,
@@ -175,7 +176,35 @@ export default {
           type: 'error'
         });
       })
-      this.isPosting = false
+      this.isPosting = false;
+    },
+    deletePost(pid) {
+      this.$ajax.post('/posts/delete', {
+        pid: pid,
+      }).then((response) => {
+        if(response.data.code === 20000){
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          });
+          this.getPostList();
+        }else{
+          this.$message({
+            message: response.data.msg,
+            type: 'error'
+          });
+        }
+        // eslint-disable-next-line no-unused-vars
+      }).catch(err => {
+        this.$message({
+          message: "删除遇到其他错误",
+          type: 'error'
+        });
+      })
+    },
+    deletePost2(pid) {
+      this.deletePost(pid);
+      this.goBack();
     }
   },
   created() {
@@ -197,6 +226,9 @@ export default {
   }
   .posts-list-card .divider {
     margin: 1em 0;
+  }
+  .post-content {
+    padding: 20px 0 0;
   }
   .post-content >>> img {
     width: 93%;

@@ -38,14 +38,15 @@
                 :timestamp="blog.ptime"
                 class="posts-list-card"
             >
-<!--              <el-dropdown class="management" v-if="right==1">-->
-<!--                <span class="el-dropdown-link">-->
-<!--                  管理<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
-<!--                </span>-->
-<!--                <el-dropdown-menu slot="dropdown">-->
-<!--                  <el-dropdown-item><p @click="deletePost(blog.id)">删除</p></el-dropdown-item>-->
-<!--                </el-dropdown-menu>-->
-<!--              </el-dropdown>-->
+<!--              v-if="this.$store.state.right===1||blog.uid===this.$store.state.uid"-->
+              <el-dropdown class="management">
+                <span class="el-dropdown-link">
+                  管理<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item><p @click="deletePost(blog.pid)">删除</p></el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
 
 <!--              <div v-html="compiledMarkdown(blog.content)" class="post-content"/>-->
               <div v-html="blog.content" class="post-content" @click="goDetail(blog.pid)"/>
@@ -118,6 +119,30 @@ export default {
     onPageChange(){
       this.getPostList();
       this.backTop();
+    },
+    deletePost(pid) {
+      this.$ajax.post('/posts/delete', {
+        pid: pid,
+      }).then((response) => {
+        if(response.data.code === 20000){
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          });
+          this.getPostList();
+        }else{
+          this.$message({
+            message: response.data.msg,
+            type: 'error'
+          });
+        }
+        // eslint-disable-next-line no-unused-vars
+      }).catch(err => {
+        this.$message({
+          message: "删除遇到其他错误",
+          type: 'error'
+        });
+      })
     }
   },
   created() {
@@ -147,6 +172,9 @@ export default {
   }
   .posts-list-card .divider {
     margin: 1em 0;
+  }
+  .post-content {
+    padding: 20px 0 0;
   }
   .post-content >>> img {
     width: 93%;
