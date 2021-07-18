@@ -109,7 +109,7 @@ func handleDeletePost(c *gin.Context) {
 	}
 
 	db.MySQL().Where("post_uuid = ?", Post.PostUuid).Delete(post{})
-	respondTemplate.RespondJson(c, 40000, "success")
+	respondTemplate.RespondJson(c, 20000, "success")
 	return
 
 }
