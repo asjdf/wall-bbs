@@ -18,6 +18,8 @@ type User struct {
 	Uid       uint         `gorm:"autoIncrement;index"`
 	Name      string
 	Tel       string `gorm:"uniqueIndex;size:11"`
+	RealName  string
+	CardCode  string `gorm:"size:20"`
 	Password  string
 	Right     string
 }

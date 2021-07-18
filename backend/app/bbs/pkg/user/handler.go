@@ -32,7 +32,7 @@ func handleUserRegister(c *gin.Context) {
 		return
 	}
 	if VerifyCardCode(formData.RealName, formData.CardCode) == true {
-		if uid, err := NewUser(formData.Name, formData.Tel, formData.Password, "0"); err == nil {
+		if uid, err := NewUser(formData.Name, formData.Tel, formData.Password, "0", formData.RealName, formData.CardCode); err == nil {
 			respondTemplate.RespondJsonWithData(c, 20000, "success", gin.H{"uid": uid})
 			return
 		} else if err.Error() == "用户已存在" {

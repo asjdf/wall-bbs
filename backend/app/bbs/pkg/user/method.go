@@ -21,13 +21,15 @@ func GetUserInfoWithTel(tel string) (*User, error) {
 	return user, result.Error
 }
 
-func NewUser(name string, tel string, password string, right string) (uid uint, err error) {
+func NewUser(name string, tel string, password string, right string, realName string, cardCode string) (uid uint, err error) {
 	user := User{
 		Uuid:     uuid.NewV4().String(),
 		Name:     name,
 		Tel:      tel,
 		Password: password,
 		Right:    right,
+		RealName: realName,
+		CardCode: cardCode,
 	}
 	result := db.MySQL().Create(&user)
 	if result.Error != nil {
