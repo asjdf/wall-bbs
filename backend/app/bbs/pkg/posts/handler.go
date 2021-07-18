@@ -16,6 +16,7 @@ func Init() {
 	}
 	posts := httpEngine.Group("/posts")
 	posts.POST("/new", handleNewPost)
+	posts.POST("/delete", handleDeletePost)
 	posts.POST("/list", handlelListPosts)
 	//posts.POST("/detail", handleDetailPost)
 	boards := httpEngine.Group("/boards")
@@ -74,6 +75,43 @@ func handleNewPost(c *gin.Context) {
 	}
 	respondTemplate.RespondJson(c, 20000, "发布成功")
 	return
+}
+
+func handleDeletePost(c *gin.Context) {
+	authResp := auth.GetAuthStatus(c)
+	if !authResp.Found {
+		respondTemplate.RespondJson(c, 40001, "尚未登陆")
+		return
+	}
+
+	postData := struct {
+		PID string `json:"pid"`
+	}{}
+	if err := c.ShouldBindJSON(&postData); err != nil {
+		respondTemplate.RespondJson(c, 40000, "无法解析JSON")
+		return
+	}
+
+	Post := post{}
+	result := db.MySQL().Model(&post{}).
+		Joins("User").
+		Where("pid = ?", postData.PID).First(&Post)
+	if result.RowsAffected != 1 {
+		respondTemplate.RespondJson(c, 40000, "文章不存在")
+		return
+	}
+
+	if Post.User.Uuid != authResp.Token.Uuid {
+		if authResp.Token.Right != "1" {
+			respondTemplate.RespondJson(c, 40000, "无删除权限")
+			return
+		}
+	}
+
+	db.MySQL().Where("post_uuid = ?", Post.PostUuid).Delete(post{})
+	respondTemplate.RespondJson(c, 40000, "success")
+	return
+
 }
 
 func handlelListPosts(c *gin.Context) {
