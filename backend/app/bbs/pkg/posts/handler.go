@@ -85,7 +85,7 @@ func handleDeletePost(c *gin.Context) {
 	}
 
 	postData := struct {
-		PID string `json:"pid"`
+		PID uint `json:"pid"`
 	}{}
 	if err := c.ShouldBindJSON(&postData); err != nil {
 		respondTemplate.RespondJson(c, 40000, "无法解析JSON")
