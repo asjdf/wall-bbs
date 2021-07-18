@@ -21,18 +21,34 @@ export default {
   name: "navbar",
   methods: {
     logout() {
-      this.$ajax({
-        url: '/user/logout',
-        method: 'get',
-      })
-      localStorage.removeItem('token');
-      localStorage.removeItem('hasToken');
-      localStorage.removeItem('right');
-      localStorage.removeItem('uid');
-      this.$store.state.hasToken = false;
-      this.$store.state.right = 0;
-      this.$store.state.uid = -1;
-      this.$router.push('/')
+      this.$ajax.get('/user/logout', {
+        async : false,
+      }).then((response) => {
+        if(response.data.code === 20000){
+          this.$message({
+            message: '登出成功',
+            type: 'success'
+          });
+          localStorage.removeItem('token');
+          localStorage.removeItem('hasToken');
+          localStorage.removeItem('right');
+          localStorage.removeItem('uid');
+          this.$store.state.hasToken = false;
+          this.$store.state.right = 0;
+          this.$store.state.uid = -1;
+        }else{
+          this.$message({
+            message: response.data.msg,
+            type: 'error'
+          });
+        }
+        // eslint-disable-next-line no-unused-vars
+      }).catch(err => {
+        this.$message({
+          message: "登出遇到其他错误",
+          type: 'error'
+        });
+      });
     },
   }
 }
