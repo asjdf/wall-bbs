@@ -20,6 +20,11 @@ export default {
           ? this.$route.name + new Date()
           : this.$route + new Date();
     }
+  },
+  created() {
+    this.$store.state.hasToken = localStorage.hasToken;
+    this.$store.state.right = localStorage.right;
+    this.$store.state.uid = localStorage.uid;
   }
 }
 </script>

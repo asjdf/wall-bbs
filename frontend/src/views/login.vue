@@ -26,14 +26,6 @@ export default {
     }
   },
   methods: {
-    checkLogin() {
-      this.$ajax({url: '/isLogin.php'}).then((response) => {
-        if (response.data.code === 20000){
-          this.$store.state.isLogin = true
-          this.$store.state.right = response.data.right
-        }
-      })
-    },
     goBack() {
       window.history.length > 1 ? this.$router.go(-1) : this.$router.push('/')
     },
@@ -56,6 +48,9 @@ export default {
           this.goBack()
           //全局存储token
           window.localStorage["token"] = response.data.data.token;
+          window.localStorage["hasToken"] = true;
+          window.localStorage["right"] = response.data.data.right;
+          window.localStorage["uid"] = response.data.data.uid;
           this.$store.state.hasToken = true;
           this.$store.state.right = response.data.data.right;
           this.$store.state.uid = response.data.data.uid;

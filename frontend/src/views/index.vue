@@ -39,7 +39,7 @@
                 class="posts-list-card"
             >
 <!--              v-if="this.$store.state.right===1||blog.uid===this.$store.state.uid"-->
-              <el-dropdown class="management">
+              <el-dropdown class="management" v-if="displayManagement(blog.uid)">
                 <span class="el-dropdown-link">
                   管理<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
@@ -119,6 +119,9 @@ export default {
     onPageChange(){
       this.getPostList();
       this.backTop();
+    },
+    displayManagement(uid) {
+      return this.$store.state.right==1||uid==this.$store.state.uid
     },
     deletePost(pid) {
       this.$ajax.post('/posts/delete', {

@@ -26,7 +26,10 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response => {
         if (response.data.code === 40001) {
-            localStorage.removeItem('token')
+            localStorage.removeItem('token');
+            localStorage.removeItem('hasToken');
+            localStorage.removeItem('right');
+            localStorage.removeItem('uid');
             router.replace('/login');
             console.log("token过期");
         }

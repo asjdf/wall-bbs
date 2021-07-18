@@ -25,8 +25,13 @@ export default {
         url: '/user/logout',
         method: 'get',
       })
-      localStorage.removeItem('token')
-      this.$store.state.hasToken = false
+      localStorage.removeItem('token');
+      localStorage.removeItem('hasToken');
+      localStorage.removeItem('right');
+      localStorage.removeItem('uid');
+      this.$store.state.hasToken = false;
+      this.$store.state.right = 0;
+      this.$store.state.uid = -1;
       this.$router.push('/')
     },
   }
