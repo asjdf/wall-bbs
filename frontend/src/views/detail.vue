@@ -16,7 +16,7 @@
           </el-card>
           <div class="posts-list">
             <el-card class="posts-list-card">
-              <el-dropdown class="management" v-if="this.$store.state.right===1||parentInfo.uid===this.$store.state.uid">
+              <el-dropdown class="management" v-if="displayManagement(parentInfo.uid)">
                 <span class="el-dropdown-link">
                   管理<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
@@ -53,7 +53,7 @@
                 :timestamp="comment.ptime"
                 class="posts-list-card"
             >
-              <el-dropdown class="management" v-if="this.$store.state.right===1||comment.uid===this.$store.state.uid">
+              <el-dropdown class="management" v-if="displayManagement(comment.uid)">
                 <span class="el-dropdown-link">
                   管理<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
@@ -136,7 +136,7 @@ export default {
         parent_id: String(this.$route.params.pid),
         page_num: this.currentPage
       }).then((response) => {
-        this.parentInfo = response.data.data.parent_post
+        this.parentInfo = response.data.data.parent_post;
         this.comments = response.data.data.child_list;
       })
     },
@@ -177,6 +177,9 @@ export default {
         });
       })
       this.isPosting = false;
+    },
+    displayManagement(uid) {
+      return this.$store.state.right==1||uid==this.$store.state.uid
     },
     deletePost(pid) {
       this.$ajax.post('/posts/delete', {
